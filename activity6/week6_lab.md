@@ -1,5 +1,5 @@
 # Week 6 – PostgreSQL Query Optimization
-Name: IGNACIO RUSSELL ROY
+Name: IGNACIO, RUSSELL ROY
 
 Course: BSIT-2
 
@@ -76,5 +76,6 @@ The optimized query performs an index scan instead of a sequential scan, process
 ![alt text](image-1.png)
 
 ![alt text](image-2.png)
+
 
 ![alt text](image-3.png)
