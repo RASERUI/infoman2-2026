@@ -4,7 +4,7 @@ Course: BSIT-2
 
 ## Analysis Measurements
 
-- Initial Data Insertion Time (1,000,000 rows): XX seconds
+- Initial Data Insertion Time (100,000 rows): XX seconds
 - Query Execution Time (Non-Indexed): ~7.06 ms
 - Query Execution Time (Indexed): ~0.12 ms
 - Single Row Insertion Time (With Index): ~X ms
