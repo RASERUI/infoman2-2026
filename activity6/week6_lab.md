@@ -9,12 +9,8 @@ Course: BSIT-2
 
 BEFORE
 
-week6_lab=# EXPLAIN ANALYZE
-week6_lab-# SELECT *
-week6_lab-# FROM posts
-week6_lab-# WHERE EXTRACT(YEAR FROM date) = 2015
-week6_lab-#   AND EXTRACT(MONTH FROM date) = 1;
-                                              QUERY PLAN
+'''text
+QUERY PLAN
 -------------------------------------------------------------------------------------------------------
  Seq Scan on posts  (cost=0.00..700.00 rows=1 width=366) (actual time=0.106..2.881 rows=22.00 loops=1)
    Filter: ((EXTRACT(year FROM date) = '2015'::numeric) AND (EXTRACT(month FROM date) = '1'::numeric))
@@ -25,6 +21,7 @@ week6_lab-#   AND EXTRACT(MONTH FROM date) = 1;
  Planning Time: 0.153 ms
  Execution Time: 2.890 ms
 (8 rows)
+'''
 
 ### What is the primary node causing the slowness in the initial execution plan?
 
@@ -98,5 +95,6 @@ The optimized query performs an index scan instead of a sequential scan, process
 
 
 ![alt text](image-3.png)
+
 
 
