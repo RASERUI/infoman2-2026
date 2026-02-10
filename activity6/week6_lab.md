@@ -7,28 +7,6 @@ Course: BSIT-2
 
 ## Scenario 1: The Slow Author Profile Page
 
-BEFORE
-
-```
-text
-QUERY PLAN
--------------------------------------------------------------------------------------------------------
- Seq Scan on posts  (cost=0.00..700.00 rows=1 width=366) (actual time=0.106..2.881 rows=22.00 loops=1)
-   Filter: ((EXTRACT(year FROM date) = '2015'::numeric) AND (EXTRACT(month FROM date) = '1'::numeric))
-   Rows Removed by Filter: 9978
-   Buffers: shared hit=500
- Planning:
-   Buffers: shared hit=22 dirtied=2
- Planning Time: 0.153 ms
- Execution Time: 2.890 ms
-(8 rows)
-'''
-
-### What is the primary node causing the slowness in the initial execution plan?
-
-The primary cause of slowness is a **Sequential Scan (Seq Scan)** on the `posts` table, followed by a **Sort** operation. PostgreSQL scans all rows in the table to filter by `author_id` and then sorts the result set by date.
-
-```
 
 ###  How can you optimize both the WHERE clause filtering and the ORDER BY operation with a single change?
 
@@ -88,6 +66,76 @@ The optimized query performs an index scan instead of a sequential scan, process
 
 ---
 
+### BEFORE ###
+
+```
+week6_lab=# EXPLAIN ANALYZE
+week6_lab-# SELECT *
+week6_lab-# FROM posts
+week6_lab-# WHERE EXTRACT(YEAR FROM date) = 2015
+week6_lab-#   AND EXTRACT(MONTH FROM date) = 1;
+                                              QUERY PLAN
+-------------------------------------------------------------------------------------------------------
+ Seq Scan on posts  (cost=0.00..700.00 rows=1 width=366) (actual time=0.106..2.881 rows=22.00 loops=1)
+   Filter: ((EXTRACT(year FROM date) = '2015'::numeric) AND (EXTRACT(month FROM date) = '1'::numeric))
+   Rows Removed by Filter: 9978
+   Buffers: shared hit=500
+ Planning:
+   Buffers: shared hit=22 dirtied=2
+ Planning Time: 0.153 ms
+ Execution Time: 2.890 ms
+(8 rows)
+```
+
+### FIX ###
+```
+week6_lab=# EXPLAIN ANALYZE
+week6_lab-# SELECT *
+week6_lab-# FROM posts
+week6_lab-# WHERE EXTRACT(YEAR FROM date) = 2015
+week6_lab-#   AND EXTRACT(MONTH FROM date) = 1;
+                                              QUERY PLAN
+-------------------------------------------------------------------------------------------------------
+ Seq Scan on posts  (cost=0.00..700.00 rows=1 width=366) (actual time=0.106..2.881 rows=22.00 loops=1)
+   Filter: ((EXTRACT(year FROM date) = '2015'::numeric) AND (EXTRACT(month FROM date) = '1'::numeric))
+   Rows Removed by Filter: 9978
+   Buffers: shared hit=500
+ Planning:
+   Buffers: shared hit=22 dirtied=2
+ Planning Time: 0.153 ms
+ Execution Time: 2.890 ms
+(8 rows)
+```
+
+### AFTER ###
+```
+week6_lab=# CREATE INDEX idx_posts_date ON posts(date);
+CREATE INDEX
+week6_lab=# EXPLAIN ANALYZE
+week6_lab-# SELECT *
+week6_lab-# FROM posts
+week6_lab-# WHERE date >= DATE '2015-01-01'
+week6_lab-#   AND date <  DATE '2015-02-01';
+                                                         QUERY PLAN
+----------------------------------------------------------------------------------------------------------------------------
+ Bitmap Heap Scan on posts  (cost=4.45..60.10 rows=16 width=366) (actual time=0.062..0.088 rows=22.00 loops=1)
+   Recheck Cond: ((date >= '2015-01-01'::date) AND (date < '2015-02-01'::date))
+   Heap Blocks: exact=22
+   Buffers: shared hit=22 read=2
+   ->  Bitmap Index Scan on idx_posts_date  (cost=0.00..4.45 rows=16 width=0) (actual time=0.047..0.047 rows=22.00 loops=1)
+         Index Cond: ((date >= '2015-01-01'::date) AND (date < '2015-02-01'::date))
+         Index Searches: 1
+         Buffers: shared read=2
+ Planning:
+   Buffers: shared hit=15 read=1
+ Planning Time: 0.331 ms
+ Execution Time: 0.106 ms
+(12 rows)
+
+```
+
+
+
 ![alt text](image.png)
 
 ![alt text](image-1.png)
@@ -96,6 +144,7 @@ The optimized query performs an index scan instead of a sequential scan, process
 
 
 ![alt text](image-3.png)
+
 
 
 
