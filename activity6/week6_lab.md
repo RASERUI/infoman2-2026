@@ -7,7 +7,6 @@ Course: BSIT-2
 
 ## Scenario 1: The Slow Author Profile Page
 
-'''text
 BEFORE
 
 week6_lab=# EXPLAIN ANALYZE
@@ -26,7 +25,6 @@ week6_lab-#   AND EXTRACT(MONTH FROM date) = 1;
  Planning Time: 0.153 ms
  Execution Time: 2.890 ms
 (8 rows)
-'''
 
 ### What is the primary node causing the slowness in the initial execution plan?
 
@@ -100,4 +98,5 @@ The optimized query performs an index scan instead of a sequential scan, process
 
 
 ![alt text](image-3.png)
+
 
