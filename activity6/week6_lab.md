@@ -87,26 +87,6 @@ week6_lab-#   AND EXTRACT(MONTH FROM date) = 1;
 (8 rows)
 ```
 
-### FIX ###
-```
-week6_lab=# EXPLAIN ANALYZE
-week6_lab-# SELECT *
-week6_lab-# FROM posts
-week6_lab-# WHERE EXTRACT(YEAR FROM date) = 2015
-week6_lab-#   AND EXTRACT(MONTH FROM date) = 1;
-                                              QUERY PLAN
--------------------------------------------------------------------------------------------------------
- Seq Scan on posts  (cost=0.00..700.00 rows=1 width=366) (actual time=0.106..2.881 rows=22.00 loops=1)
-   Filter: ((EXTRACT(year FROM date) = '2015'::numeric) AND (EXTRACT(month FROM date) = '1'::numeric))
-   Rows Removed by Filter: 9978
-   Buffers: shared hit=500
- Planning:
-   Buffers: shared hit=22 dirtied=2
- Planning Time: 0.153 ms
- Execution Time: 2.890 ms
-(8 rows)
-```
-
 ### AFTER ###
 ```
 week6_lab=# CREATE INDEX idx_posts_date ON posts(date);
@@ -140,10 +120,8 @@ week6_lab-#   AND date <  DATE '2015-02-01';
 
 ![alt text](image-1.png)
 
-![alt text](image-2.png)
-
-
 ![alt text](image-3.png)
+
 
 
 
